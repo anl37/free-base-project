@@ -16,6 +16,8 @@ import DevDebug from "./pages/DevDebug";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { OnboardingCheck } from "./components/OnboardingCheck";
+import { IncomingConnectionRequestDialog } from "./components/IncomingConnectionRequestDialog";
+import { MatchNotificationDialog } from "./components/MatchNotificationDialog";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +27,8 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <IncomingConnectionRequestDialog />
+        <MatchNotificationDialog />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
