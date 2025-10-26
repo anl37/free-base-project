@@ -51,7 +51,7 @@ export const useConnectionRequest = () => {
             uid_a: user.id < receiverId ? user.id : receiverId,
             uid_b: user.id < receiverId ? receiverId : user.id,
             pair_id: pairId,
-            status: 'confirmed'
+            status: 'connected'
           });
 
         if (matchError) {
@@ -112,10 +112,10 @@ export const useConnectionRequest = () => {
         .maybeSingle();
 
       if (existingMatch) {
-        // Update existing match to confirmed
+        // Update existing match to connected
         const { error: updateMatchError } = await supabase
           .from('matches')
-          .update({ status: 'confirmed' })
+          .update({ status: 'connected' })
           .eq('id', existingMatch.id);
 
         if (updateMatchError) {
@@ -131,7 +131,7 @@ export const useConnectionRequest = () => {
             uid_a: user.id < senderId ? user.id : senderId,
             uid_b: user.id < senderId ? senderId : user.id,
             pair_id: pairId,
-            status: 'confirmed'
+            status: 'connected'
           });
 
         if (matchError) {
