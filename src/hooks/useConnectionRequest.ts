@@ -104,18 +104,41 @@ export const useConnectionRequest = () => {
       // Create match
       const pairId = [user.id, senderId].sort().join('_');
       
-      const { error: matchError } = await supabase
+      // Check if match already exists
+      const { data: existingMatch } = await supabase
         .from('matches')
-        .insert({
-          uid_a: user.id < senderId ? user.id : senderId,
-          uid_b: user.id < senderId ? senderId : user.id,
-          pair_id: pairId,
-          status: 'confirmed'
-        });
+        .select('id, status')
+        .eq('pair_id', pairId)
+        .maybeSingle();
 
-      if (matchError) {
-        toast.error("Failed to create connection");
-        return { success: false };
+      if (existingMatch) {
+        // Update existing match to confirmed
+        const { error: updateMatchError } = await supabase
+          .from('matches')
+          .update({ status: 'confirmed' })
+          .eq('id', existingMatch.id);
+
+        if (updateMatchError) {
+          console.error('Error updating existing match:', updateMatchError);
+          toast.error("Failed to update connection");
+          return { success: false };
+        }
+      } else {
+        // Create new match
+        const { error: matchError } = await supabase
+          .from('matches')
+          .insert({
+            uid_a: user.id < senderId ? user.id : senderId,
+            uid_b: user.id < senderId ? senderId : user.id,
+            pair_id: pairId,
+            status: 'confirmed'
+          });
+
+        if (matchError) {
+          console.error('Error creating match:', matchError);
+          toast.error(`Failed to create connection: ${matchError.message}`);
+          return { success: false };
+        }
       }
 
       // Update request status
